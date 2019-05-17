@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.myapplication.MainActivity">
+    <item
+        android:id="@+id/action_all_user"
+        android:orderInCategory="100"
+        android:title="@string/all_sof_user"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_bookmarked"
+        android:orderInCategory="100"
+        android:title="@string/bookmarked_user"
+        app:showAsAction="never" />
+</menu>

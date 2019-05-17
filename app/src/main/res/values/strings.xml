@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SOF User</string>
+    <string name="msg_no_network">No network connection. Please check your network connection.</string>
+    <string name="sof_user_title">StackOverFlow User List</string>
+    <string name="reputation_history">Reputation History</string>
+    <string name="full_date_time_format">"MMM dd yyyy HH:mm"</string>
+    <string name="short_date_time_format">"MMM dd HH:mm"</string>
+    <string name="last_acceess">Last access: </string>
+    <string name="all_sof_user">All SOF User</string>
+    <string name="bookmarked_user">Bookmarked User</string>
+    <string name="str_press_back_exit">Press back again to close this app</string>
+</resources>

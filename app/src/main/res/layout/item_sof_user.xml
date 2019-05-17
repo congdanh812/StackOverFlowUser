@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/item_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardBackgroundColor="@android:color/white"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="true"
+    android:layout_margin="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="5dp">
+
+                <ImageView
+                    android:id="@+id/item_iv_profile_image"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:src="@drawable/sof_default_image" />
+            </android.support.v7.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/item_tv_display_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="40dp"
+                    android:text="JOHN"
+                    android:textColor="#1279c9"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:id="@+id/item_ll_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="5dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_location" />
+
+                    <TextView
+                        android:id="@+id/item_tv_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="USA"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="5dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_reputation" />
+
+                    <TextView
+                        android:id="@+id/item_tv_reputation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="1105k"
+                        android:textSize="14sp"
+                        android:textColor="#6a737c"/>
+
+                    <ImageView
+                        android:id="@+id/item_iv_gold_badges"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/gold_badges" />
+
+                    <TextView
+                        android:id="@+id/item_tv_gold_badges"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="1105k"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/item_iv_silver_badges"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/silver_badges" />
+
+                    <TextView
+                        android:id="@+id/item_tv_silver_badges"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="1105k"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/item_iv_bronze_badges"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/bronze_badges" />
+
+                    <TextView
+                        android:id="@+id/item_tv_bronze_badges"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:text="1100k"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="5dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_last_access" />
+
+                    <TextView
+                        android:id="@+id/item_tv_last_access_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Last access date"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/item_iv_bookmark"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
