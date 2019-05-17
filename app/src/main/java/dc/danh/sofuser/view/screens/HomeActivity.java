@@ -39,21 +39,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SOFUserListener {
-    private String TAG = HomeActivity.class.toString();
     private int mPaginate = 1;
-    private SOFUserDatabase sofUserDatabase;
-    private List<SOFUser> sofUserBookmarkedList;
-    private long lastBackPressTime = 0;
-    private Toast toast;
+    private SOFUserDatabase mDatabase;
+    private List<SOFUser> mBookmarkedList;
+    private long mLastBackPressTime = 0;
+    private Toast mToast;
 
-    @BindView(R.id.swipe_container)
+    @BindView(R.id.act_home_srl_container)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    @BindView(R.id.sof_user_home_list)
+    @BindView(R.id.act_home_rv_user)
     RecyclerView rvSOFUser;
 
-    @BindView(R.id.progress_loadmore)
-    ProgressBar progressBar;
+    @BindView(R.id.act_home_pb_loadmore)
+    ProgressBar pbLoadMore;
 
     Call<SOFUserObject> sofUserLisCall;
 
@@ -89,7 +88,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
     }
 
     private void initDatabase() {
-        sofUserDatabase = Room.databaseBuilder(HomeActivity.this, SOFUserDatabase.class, "SOFUserObject").build();
+        mDatabase = Room.databaseBuilder(HomeActivity.this, SOFUserDatabase.class, "SOFUser").build();
     }
 
     private void initRecyclerView() {
@@ -103,6 +102,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 if (adapterSOFUser.getViewType() == EnumManager.ViewType.All.getValue()) {
+                    pbLoadMore.setVisibility(View.VISIBLE);
                     mPaginate = page + 1;
                     getSOFUserList();
                 }
@@ -116,27 +116,26 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                sofUserBookmarkedList = sofUserDatabase.sofUserDAO().getAllSOFUser();
+                mBookmarkedList = mDatabase.sofUserDAO().getAllSOFUser();
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                adapterSOFUser.addBookmarkList(sofUserBookmarkedList);
+                adapterSOFUser.addBookmarkList(mBookmarkedList);
             }
         }.execute();
     }
 
     private void getSOFUserList() {
         if (NetworkUtils.isNetworkAvailable(HomeActivity.this)) {
-            progressBar.setVisibility(View.VISIBLE);
             int mPageSize = 30;
             sofUserLisCall = sofService.getSOFUserList(mPaginate, mPageSize);
             sofUserLisCall.enqueue(new Callback<SOFUserObject>() {
                 @Override
                 public void onResponse(Call<SOFUserObject> call, Response<SOFUserObject> response) {
-                    progressBar.setVisibility(View.GONE);
+                    pbLoadMore.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                     adapterSOFUser.setViewType(EnumManager.ViewType.All.getValue());
                     if (response.body() != null) {
@@ -146,13 +145,14 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
 
                 @Override
                 public void onFailure(Call<SOFUserObject> call, Throwable t) {
-                    progressBar.setVisibility(View.GONE);
+                    pbLoadMore.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                     t.printStackTrace();
                     Toast.makeText(HomeActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
+            pbLoadMore.setVisibility(View.GONE);
             swipeRefreshLayout.setRefreshing(false);
         }
     }
@@ -183,13 +183,13 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
 
     @Override
     public void onBookmarkClick(int position, SOFUserItem sofUserItem) {
-        if (sofUserBookmarkedList.size() == 0) {
+        if (mBookmarkedList.size() == 0) {
             //Don't have any bookmark added
             addBookmark(sofUserItem);
         } else {
             boolean isBookmark = false;
 
-            for (SOFUser sofUser : sofUserBookmarkedList) {
+            for (SOFUser sofUser : mBookmarkedList) {
                 if (sofUser.getUserID() == sofUserItem.getUser_id()) {
                     isBookmark = true;
                     deleteBookmark(sofUser);
@@ -207,14 +207,14 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                sofUserDatabase.sofUserDAO().deleteSOFUser(sofUser.getUserID());
+                mDatabase.sofUserDAO().deleteSOFUser(sofUser.getUserID());
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                sofUserBookmarkedList.remove(sofUser);
+                mBookmarkedList.remove(sofUser);
                 adapterSOFUser.removeBookmark(sofUser);
             }
         }.execute();
@@ -232,14 +232,14 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
                 String sofUserString = gson.toJson(sofUserItem);
                 sofUser.setUserDetail(sofUserString);
 
-                sofUserDatabase.sofUserDAO().insertAll(sofUser);
+                mDatabase.sofUserDAO().insertAll(sofUser);
                 return sofUser;
             }
 
             @Override
             protected void onPostExecute(SOFUser sofUser) {
                 super.onPostExecute(sofUser);
-                sofUserBookmarkedList.add(sofUser);
+                mBookmarkedList.add(sofUser);
                 adapterSOFUser.addBookmark(sofUser);
             }
         }.execute();
@@ -267,13 +267,13 @@ public class HomeActivity extends AppCompatActivity implements AdapterSOFUser.SO
 
     @Override
     public void onBackPressed() {
-        if (this.lastBackPressTime < System.currentTimeMillis() - 1000) {
-            toast = Toast.makeText(this, getString(R.string.str_press_back_exit), Toast.LENGTH_SHORT);
-            toast.show();
-            this.lastBackPressTime = System.currentTimeMillis();
+        if (this.mLastBackPressTime < System.currentTimeMillis() - 1000) {
+            mToast = Toast.makeText(this, getString(R.string.str_press_back_exit), Toast.LENGTH_SHORT);
+            mToast.show();
+            this.mLastBackPressTime = System.currentTimeMillis();
         } else {
-            if (toast != null) {
-                toast.cancel();
+            if (mToast != null) {
+                mToast.cancel();
             }
             super.onBackPressed();
         }

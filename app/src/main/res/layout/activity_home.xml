@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_container"
+        android:id="@+id/act_home_srl_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/sof_user_home_list"
+            android:id="@+id/act_home_rv_user"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:clipToPadding="false"
             android:dividerHeight="0dp"
             android:overScrollMode="never" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
-        android:id="@+id/progress_loadmore"
+        android:id="@+id/act_home_pb_loadmore"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/size_50dp"
         android:background="@android:color/transparent"
         android:visibility="gone" />
 

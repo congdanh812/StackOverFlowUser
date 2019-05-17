@@ -3,4 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="display_name">#1279c9</color>
+    <color name="reputation_total">#232628</color>
+    <color name="reputation_label">#848D95</color>
+    <color name="badges">#535a60</color>
+    <color name="location">#6a737c</color>
+    <color name="date_created">#bbc0c4</color>
 </resources>

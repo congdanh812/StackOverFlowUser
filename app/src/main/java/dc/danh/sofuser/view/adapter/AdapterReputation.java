@@ -26,15 +26,15 @@ import dc.danh.sofuser.model.ReputationItem;
 import dc.danh.sofuser.view.screens.ReputationActivity;
 
 public class AdapterReputation extends RecyclerView.Adapter<AdapterReputation.ViewHolder> {
-    private final List<ReputationItem> reputationItemList = new ArrayList<>(0);
+    private final List<ReputationItem> mReputationItemList = new ArrayList<>(0);
     private final Context context;
-    private SimpleDateFormat fullDateTimeFormat;
+    private SimpleDateFormat mFullDateTimeFormat;
 
     @Inject
     AdapterReputation(ReputationActivity context) {
         this.context = context;
         Locale locale = context.getResources().getConfiguration().locale;
-        fullDateTimeFormat = new SimpleDateFormat(context.getResources().getString(R.string.short_date_time_format), locale);
+        mFullDateTimeFormat = new SimpleDateFormat(context.getResources().getString(R.string.short_date_time_format), locale);
     }
 
     @NotNull
@@ -45,8 +45,8 @@ public class AdapterReputation extends RecyclerView.Adapter<AdapterReputation.Vi
 
     @Override
     public void onBindViewHolder(@NotNull ViewHolder holder, int position) {
-        if (reputationItemList.size() > 0) {
-            ReputationItem reputationItem = reputationItemList.get(position);
+        if (mReputationItemList.size() > 0) {
+            ReputationItem reputationItem = mReputationItemList.get(position);
             if (reputationItem != null) {
                 String reputationChange;
                 if (reputationItem.getReputation_change() < 0) {
@@ -61,7 +61,7 @@ public class AdapterReputation extends RecyclerView.Adapter<AdapterReputation.Vi
                 }
                 holder.tvReputationChange.setText(reputationChange);
 
-                String lastAccessDate = fullDateTimeFormat.format(new Date(reputationItem.getCreation_date() * 1000));
+                String lastAccessDate = mFullDateTimeFormat.format(new Date(reputationItem.getCreation_date() * 1000));
                 holder.tvReputationDateCreated.setText(lastAccessDate);
 
                 holder.tvReputationType.setText(reputationItem.getReputation_history_type());
@@ -73,12 +73,12 @@ public class AdapterReputation extends RecyclerView.Adapter<AdapterReputation.Vi
 
     @Override
     public int getItemCount() {
-        return reputationItemList.size();
+        return mReputationItemList.size();
     }
 
     public void addData(Collection<ReputationItem> reputationItems) {
         if (reputationItems != null) {
-            this.reputationItemList.addAll(reputationItems);
+            this.mReputationItemList.addAll(reputationItems);
         }
         notifyDataSetChanged();
     }

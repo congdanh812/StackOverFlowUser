@@ -36,19 +36,19 @@ import dc.danh.sofuser.model.database.SOFUser;
 import dc.danh.sofuser.view.screens.HomeActivity;
 
 public class AdapterSOFUser extends RecyclerView.Adapter<AdapterSOFUser.ViewHolder> {
-    private final List<SOFUserItem> sofUserList = new ArrayList<>(0);
-    private final List<SOFUser> bookmarkedList = new ArrayList<>(0);
+    private final List<SOFUserItem> mSofUserList = new ArrayList<>(0);
+    private final List<SOFUser> mBookmarkedList = new ArrayList<>(0);
 
     private final Context context;
-    private SOFUserListener listener;
-    private SimpleDateFormat fullDateTimeFormat;
-    private int viewType;
+    private SOFUserListener mListener;
+    private SimpleDateFormat mFullDateTimeFormat;
+    private int mViewType;
 
     @Inject
     AdapterSOFUser(HomeActivity context) {
         this.context = context;
         Locale locale = context.getResources().getConfiguration().locale;
-        fullDateTimeFormat = new SimpleDateFormat("MMM dd yyyy HH:mm", locale);
+        mFullDateTimeFormat = new SimpleDateFormat(context.getResources().getString(R.string.full_date_time_format), locale);
     }
 
     @NotNull
@@ -60,14 +60,13 @@ public class AdapterSOFUser extends RecyclerView.Adapter<AdapterSOFUser.ViewHold
     @Override
     public void onBindViewHolder(@NotNull ViewHolder holder, int position) {
         SOFUserItem sofUserItem = null;
-        if (viewType == EnumManager.ViewType.All.getValue()) {
-            if (sofUserList.size() > 0) {
-                sofUserItem = sofUserList.get(position);
+        if (mViewType == EnumManager.ViewType.All.getValue()) {
+            if (mSofUserList.size() > 0) {
+                sofUserItem = mSofUserList.get(position);
             }
-
         } else {
-            if (bookmarkedList.size() > 0) {
-                String userDetail = bookmarkedList.get(position).getUserDetail();
+            if (mBookmarkedList.size() > 0) {
+                String userDetail = mBookmarkedList.get(position).getUserDetail();
                 Gson gson = new Gson();
                 Type type = new TypeToken<SOFUserItem>() {}.getType();
                 sofUserItem = gson.fromJson(userDetail, type);
@@ -124,63 +123,62 @@ public class AdapterSOFUser extends RecyclerView.Adapter<AdapterSOFUser.ViewHold
             holder.tvSilverBadges.setText(silverBadges);
             holder.tvBronzeBadges.setText(bronzeBadges);
 
-            String lastAccessDate = fullDateTimeFormat.format(new Date(sofUserItem.getLast_access_date() * 1000));
+            String lastAccessDate = mFullDateTimeFormat.format(new Date(sofUserItem.getLast_access_date() * 1000));
             holder.tvLastAccessDate.setText(lastAccessDate);
 
             Glide.with(context).load(sofUserItem.getProfile_image()).placeholder(R.drawable.sof_default_image).into(holder.ivProfileImage);
 
             SOFUserItem finalSofUserItem = sofUserItem;
-            holder.ivBookmark.setOnClickListener(v -> listener.onBookmarkClick(position, finalSofUserItem));
+            holder.ivBookmark.setOnClickListener(v -> mListener.onBookmarkClick(position, finalSofUserItem));
 
             holder.ivBookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmark));
-            if (bookmarkedList.size() > 0) {
-                for (SOFUser sofUser : bookmarkedList) {
+            if (mBookmarkedList.size() > 0) {
+                for (SOFUser sofUser : mBookmarkedList) {
                     if (sofUser.getUserID() == sofUserItem.getUser_id()) {
                         holder.ivBookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
                     }
                 }
             }
 
-            holder.cardView.setOnClickListener(v -> listener.onItemClick(position, finalSofUserItem));
+            holder.cardView.setOnClickListener(v -> mListener.onItemClick(position, finalSofUserItem));
         }
-
     }
 
     @Override
     public int getItemCount() {
-        if (viewType == EnumManager.ViewType.All.getValue()) {
-            return sofUserList.size();
+        if (mViewType == EnumManager.ViewType.All.getValue()) {
+            return mSofUserList.size();
         } else {
-            return bookmarkedList.size();
+            return mBookmarkedList.size();
         }
     }
 
     public void addData(Collection<SOFUserItem> sofUserList) {
         if (sofUserList != null) {
-            this.sofUserList.addAll(sofUserList);
+            this.mSofUserList.addAll(sofUserList);
         }
         notifyDataSetChanged();
     }
 
     public void addBookmarkList(Collection<SOFUser> bookmarkList) {
-        this.bookmarkedList.addAll(bookmarkList);
+        this.mBookmarkedList.addAll(bookmarkList);
         sortBookmarkList();
         notifyDataSetChanged();
     }
 
     public void addBookmark(SOFUser sofUser) {
-        this.bookmarkedList.add(sofUser);
+        this.mBookmarkedList.add(sofUser);
         sortBookmarkList();
         notifyDataSetChanged();
     }
 
     public void removeBookmark(SOFUser sofUser) {
-        this.bookmarkedList.remove(sofUser);
+        this.mBookmarkedList.remove(sofUser);
         notifyDataSetChanged();
     }
 
     private void sortBookmarkList(){
-        Collections.sort(bookmarkedList, (o1, o2) -> {
+        Collections.sort(mBookmarkedList, (o1, o2) -> {
             String userDetail1 = o1.getUserDetail();
             String userDetail2 = o2.getUserDetail();
             Gson gson = new Gson();
@@ -193,16 +191,16 @@ public class AdapterSOFUser extends RecyclerView.Adapter<AdapterSOFUser.ViewHold
     }
 
     public void setViewType(int viewType) {
-        this.viewType = viewType;
+        this.mViewType = viewType;
         notifyDataSetChanged();
     }
 
     public int getViewType() {
-        return viewType;
+        return mViewType;
     }
 
     public void setListener(SOFUserListener sofUserListener) {
-        listener = sofUserListener;
+        mListener = sofUserListener;
     }
 
     public interface SOFUserListener {
@@ -212,46 +210,46 @@ public class AdapterSOFUser extends RecyclerView.Adapter<AdapterSOFUser.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.item_card_view)
+        @BindView(R.id.item_sof_user_card_view)
         CardView cardView;
 
-        @BindView(R.id.item_iv_profile_image)
+        @BindView(R.id.item_sof_user_iv_profile_image)
         ImageView ivProfileImage;
 
-        @BindView(R.id.item_tv_display_name)
+        @BindView(R.id.item_sof_user_tv_display_name)
         TextView tvDisplayName;
 
-        @BindView(R.id.item_ll_location)
+        @BindView(R.id.item_sof_user_ll_location)
         LinearLayout llLocation;
 
-        @BindView(R.id.item_tv_location)
+        @BindView(R.id.item_sof_user_tv_location)
         TextView tvLocation;
 
-        @BindView(R.id.item_tv_reputation)
+        @BindView(R.id.item_sof_user_tv_reputation)
         TextView tvReputation;
 
-        @BindView(R.id.item_iv_gold_badges)
+        @BindView(R.id.item_sof_user_iv_gold_badges)
         ImageView ivGoldBadges;
 
-        @BindView(R.id.item_tv_gold_badges)
+        @BindView(R.id.item_sof_user_tv_gold_badges)
         TextView tvGoldBadges;
 
-        @BindView(R.id.item_iv_silver_badges)
+        @BindView(R.id.item_sof_user_iv_silver_badges)
         ImageView ivSilverBadges;
 
-        @BindView(R.id.item_tv_silver_badges)
+        @BindView(R.id.item_sof_user_tv_silver_badges)
         TextView tvSilverBadges;
 
-        @BindView(R.id.item_iv_bronze_badges)
+        @BindView(R.id.item_sof_user_iv_bronze_badges)
         ImageView ivBronzeBadges;
 
-        @BindView(R.id.item_tv_bronze_badges)
+        @BindView(R.id.item_sof_user_tv_bronze_badges)
         TextView tvBronzeBadges;
 
-        @BindView(R.id.item_tv_last_access_date)
+        @BindView(R.id.item_sof_user_tv_last_access_date)
         TextView tvLastAccessDate;
 
-        @BindView(R.id.item_iv_bookmark)
+        @BindView(R.id.item_sof_user_iv_bookmark)
         ImageView ivBookmark;
 
         ViewHolder(View itemView) {

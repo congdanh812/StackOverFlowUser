@@ -2,6 +2,7 @@ package dc.danh.sofuser.view.screens;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,60 +35,53 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ReputationActivity extends AppCompatActivity {
-    private String TAG = ReputationActivity.class.toString();
     private int mPaginate = 1;
-    private int userID;
+    private int mUserID;
 
-    @BindView(R.id.rv_reputation_history)
-    RecyclerView rvReputationHistory;
-
-    @BindView(R.id.tv_reputation)
-    TextView tvReputation;
-
-    @BindView(R.id.item_iv_profile_image)
-    ImageView ivProfileImage;
-
-    @BindView(R.id.item_tv_display_name)
+    @BindView(R.id.act_rep_tv_display_name)
     TextView tvDisplayName;
 
-    @BindView(R.id.item_ll_location)
-    LinearLayout llLocation;
+    @BindView(R.id.act_rep_iv_profile_image)
+    ImageView ivProfileImage;
 
-    @BindView(R.id.item_tv_location)
-    TextView tvLocation;
+    @BindView(R.id.act_rep_tv_reputation)
+    TextView tvReputation;
 
-    @BindView(R.id.item_ll_gold_badges)
+    @BindView(R.id.act_rep_ll_gold_badges)
     LinearLayout llGoldBadges;
 
-    @BindView(R.id.item_iv_gold_badges)
-    ImageView ivGoldBadges;
-
-    @BindView(R.id.item_tv_gold_badges)
+    @BindView(R.id.act_rep_tv_gold_badges)
     TextView tvGoldBadges;
 
-    @BindView(R.id.item_ll_silver_badges)
+    @BindView(R.id.act_rep_ll_silver_badges)
     LinearLayout llSilverBadges;
 
-    @BindView(R.id.item_iv_silver_badges)
-    ImageView ivSilverBadges;
-
-    @BindView(R.id.item_tv_silver_badges)
+    @BindView(R.id.act_rep_tv_silver_badges)
     TextView tvSilverBadges;
 
-    @BindView(R.id.item_ll_bronze_badges)
+    @BindView(R.id.act_rep_ll_bronze_badges)
     LinearLayout llBronzeBadges;
 
-    @BindView(R.id.item_iv_bronze_badges)
-    ImageView ivBronzeBadges;
-
-    @BindView(R.id.item_tv_bronze_badges)
+    @BindView(R.id.act_rep_tv_bronze_badges)
     TextView tvBronzeBadges;
 
-    @BindView(R.id.item_tv_last_access_date)
+    @BindView(R.id.act_rep_ll_location)
+    LinearLayout llLocation;
+
+    @BindView(R.id.act_rep_tv_location)
+    TextView tvLocation;
+
+    @BindView(R.id.act_rep_tv_last_access_date)
     TextView tvLastAccessDate;
 
-    @BindView(R.id.progress_loadmore)
-    ProgressBar progressBar;
+    @BindView(R.id.act_rep_srl_container)
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.act_rep_rv_reputation_history)
+    RecyclerView rvReputationHistory;
+
+    @BindView(R.id.act_rep_pb_loadmore)
+    ProgressBar pbLoadMore;
 
     @Inject
     SOFService sofService;
@@ -111,13 +105,18 @@ public class ReputationActivity extends AppCompatActivity {
         component.injectReputationActivity(this);
         setTitle(getResources().getString(R.string.reputation_history));
 
-        userID = getIntent().getIntExtra("user_id", -1);
-        if (userID == -1)
+        mUserID = getIntent().getIntExtra("user_id", -1);
+        if (mUserID == -1)
             return;
 
         displayUserDetail();
         initRecyclerView();
-        getReputationHistoryList();
+        swipeRefreshLayout.setOnRefreshListener(this::getReputationHistoryList);
+        swipeRefreshLayout.post(() -> {
+            swipeRefreshLayout.setRefreshing(true);
+            pbLoadMore.setVisibility(View.GONE);
+            getReputationHistoryList();
+        });
     }
 
     private void displayUserDetail() {
@@ -183,6 +182,7 @@ public class ReputationActivity extends AppCompatActivity {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                pbLoadMore.setVisibility(View.VISIBLE);
                 mPaginate = page + 1;
                 getReputationHistoryList();
             }
@@ -192,13 +192,13 @@ public class ReputationActivity extends AppCompatActivity {
 
     private void getReputationHistoryList() {
         if (NetworkUtils.isNetworkAvailable(ReputationActivity.this)) {
-            progressBar.setVisibility(View.VISIBLE);
             int mPageSize = 30;
-            reputationHistoryCall = sofService.getSOFUserReputationHistory(userID, mPaginate, mPageSize);
+            reputationHistoryCall = sofService.getSOFUserReputationHistory(mUserID, mPaginate, mPageSize);
             reputationHistoryCall.enqueue(new Callback<ReputationObject>() {
                 @Override
                 public void onResponse(Call<ReputationObject> call, Response<ReputationObject> response) {
-                    progressBar.setVisibility(View.GONE);
+                    pbLoadMore.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
                     if (response.body() != null && response.body().items != null) {
                         adapterReputation.addData(response.body().items);
                     }
@@ -206,11 +206,15 @@ public class ReputationActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ReputationObject> call, Throwable t) {
-                    progressBar.setVisibility(View.GONE);
+                    pbLoadMore.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
                     t.printStackTrace();
                     Toast.makeText(ReputationActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        } else {
+            pbLoadMore.setVisibility(View.GONE);
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
